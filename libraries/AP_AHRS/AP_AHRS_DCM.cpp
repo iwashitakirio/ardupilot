@@ -727,7 +727,7 @@ AP_AHRS_DCM::drift_correction(float deltat)
         float airspeed_TAS = _last_airspeed_TAS;
 #if AP_AIRSPEED_ENABLED
         if (airspeed_sensor_enabled()) {
-            airspeed_TAS = AP::airspeed()->get_airspeed();
+            airspeed_TAS = AP::airspeed()->get_airspeed() * get_EAS2TAS();
         }
 #endif
 
@@ -1143,13 +1143,13 @@ bool AP_AHRS_DCM::get_unconstrained_airspeed_EAS(uint8_t airspeed_index, float &
 
     if (AP::ahrs().get_wind_estimation_enabled() && have_gps()) {
         // estimated via GPS speed and wind
-        airspeed_ret = _last_airspeed_TAS;
+        airspeed_ret = _last_airspeed_TAS * get_TAS2EAS();
         return true;
     }
 
     // Else give the last estimate, but return false.
     // This is used by the dead-reckoning code
-    airspeed_ret = _last_airspeed_TAS;
+    airspeed_ret = _last_airspeed_TAS * get_TAS2EAS();
     return false;
 }
 
